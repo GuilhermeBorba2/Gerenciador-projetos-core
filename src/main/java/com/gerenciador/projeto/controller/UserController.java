@@ -1,10 +1,12 @@
 package com.gerenciador.projeto.controller;
 
 
+import com.gerenciador.projeto.model.DTO.UserDto;
 import com.gerenciador.projeto.model.User;
 import com.gerenciador.projeto.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,8 +33,9 @@ public class UserController {
         return ResponseEntity.ok().body(user);
 
     }
-    @PostMapping
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails){
+
+    @PutMapping("/`{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody @Validated  UserDto userDetails){
         User updateUser = userService.updateUser(id, userDetails);
         return ResponseEntity.ok(updateUser);
     }
@@ -40,6 +43,12 @@ public class UserController {
     public ResponseEntity<Void> deleteUser (@PathVariable Long id){
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<User> registerUser(@RequestBody UserDto userDto){
+        User user = userService.registerUser(userDto);
+        return ResponseEntity.ok(user);
     }
 }
 
