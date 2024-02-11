@@ -31,7 +31,6 @@ public class UserController {
         User user = userService.findUserById(id)
             .orElseThrow(()-> new RuntimeException("User not found for this id::"+id));
         return ResponseEntity.ok().body(user);
-
     }
 
     @PutMapping("/`{id}")

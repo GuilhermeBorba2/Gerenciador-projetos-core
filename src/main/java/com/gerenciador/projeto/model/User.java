@@ -3,6 +3,8 @@ package com.gerenciador.projeto.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 
+import java.util.List;
+
 
 @Entity
 @Table(name = "users")
@@ -19,6 +21,18 @@ public class User {
     private String email;
     @Pattern(regexp="^\\+?[1-9]\\d{1,14}$", message="Número de telefone inválido")
     private String phoneNumber;
+
+
+    @OneToMany(mappedBy = "user")
+    private List<Task> tasks;
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
+    }
 
     public User(){
 

@@ -1,5 +1,6 @@
 package com.gerenciador.projeto.controller;
 
+import com.gerenciador.projeto.model.DTO.TaskDto;
 import com.gerenciador.projeto.model.Task;
 import com.gerenciador.projeto.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +32,13 @@ public class TaskController {
     }
 
     @PostMapping
-    public Task createTask(@RequestBody Task task) {
-        return taskService.saveTask(task);
+    public ResponseEntity<Task>  createTask(@RequestBody TaskDto taskDto) {
+        Task task = taskService.saveTask(taskDto);
+        return ResponseEntity.ok(task);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<Task> updateTask (@PathVariable Long id, @RequestBody Task taskDetails){
-        Task updateTask =taskService.updateTask(id, taskDetails);
+    public ResponseEntity<Task> updateTask (@PathVariable Long id, @RequestBody TaskDto taskDto){
+        Task updateTask = taskService.updateTask(id, taskDto);
         return ResponseEntity.ok(updateTask);
     }
 

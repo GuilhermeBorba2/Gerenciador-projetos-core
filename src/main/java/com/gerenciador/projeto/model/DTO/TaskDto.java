@@ -1,61 +1,31 @@
-package com.gerenciador.projeto.model;
+package com.gerenciador.projeto.model.DTO;
 
 import com.gerenciador.projeto.model.enums.Status;
-import jakarta.persistence.*;
-import jakarta.servlet.http.PushBuilder;
-import org.springframework.cglib.core.Local;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 import java.time.LocalDate;
 
-@Entity
-public class Task {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class TaskDto {
     private String title;
     private String description;
-
-   @Enumerated(EnumType.STRING)
     private Status status;
-
     private LocalDate dueDate;
 
     private LocalDate creationDate;
-    private LocalDate completionDate;
 
+    private Long userId;
 
-    @ManyToOne
-    @JoinColumn(name = "user.id")
-    private User user;
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
     public LocalDate getCreationDate() {
         return creationDate;
-    }
-
-
-
-    public boolean isOverdue(){
-        return dueDate != null && LocalDate.now().isAfter(dueDate) && status !=Status.CONCLUIDA;
-    }
-
-    public void updateStatusBasedOnDates(){
-        if(status ==Status.CONCLUIDA){
-            return;
-        }
-        if(isOverdue()){
-            setStatus(Status.PENDENTE);
-        }
-        else{
-            setStatus(Status.EM_ANDAMENTO);
-        }
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public void setCreationDate(LocalDate creationDate) {
@@ -70,24 +40,20 @@ public class Task {
         this.completionDate = completionDate;
     }
 
-    public Task(){
+    private LocalDate completionDate;
 
-    }
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
     public String getTitle() {
         return title;
     }
+
     public void setTitle(String title) {
         this.title = title;
     }
+
     public String getDescription() {
         return description;
     }
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -99,6 +65,7 @@ public class Task {
     public void setStatus(Status status) {
         this.status = status;
     }
+
     public LocalDate getDueDate() {
         return dueDate;
     }
@@ -106,5 +73,6 @@ public class Task {
     public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
     }
+
 
 }
