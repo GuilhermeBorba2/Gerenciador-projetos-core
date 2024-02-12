@@ -3,10 +3,15 @@ package com.gerenciador.projeto.controller;
 import com.gerenciador.projeto.model.DTO.TaskDto;
 import com.gerenciador.projeto.model.Task;
 import com.gerenciador.projeto.service.TaskService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.validation.BindingResult;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -30,11 +35,16 @@ public class TaskController {
                 .orElseThrow(()-> new RuntimeException("Task not found for this id :: " + id));
         return ResponseEntity.ok().body(task);
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
-    public ResponseEntity<Task>  createTask(@RequestBody TaskDto taskDto) {
+    public ResponseEntity<?>  createTask(@Valid @RequestBody TaskDto taskDto, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()){
+            return new ResponseEntity<>(bindingResult.getAllErrors(), HttpStatus.BAD_REQUEST);
+        }
         Task task = taskService.saveTask(taskDto);
-        return ResponseEntity.ok(task);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                .buildAndExpand(task.getId()).toUri();
+        return ResponseEntity.created(location).body(task);
     }
     @PutMapping("/{id}")
     public ResponseEntity<Task> updateTask (@PathVariable Long id, @RequestBody TaskDto taskDto){

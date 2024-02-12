@@ -7,6 +7,7 @@ import com.gerenciador.projeto.model.enums.Status;
 import com.gerenciador.projeto.repository.TaskRepository;
 import com.gerenciador.projeto.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,17 +43,18 @@ public class TaskService {
                 taskRepository.save(task);
             }
         }
-
     }
     public List <Task> findByStatus (Status status){
         return taskRepository.findByStatus(status);
     }
 
     public Optional<Task> findTaskById(long id){
-        Task task = taskRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Task not found for this id::"+id));
-        task.updateStatusBasedOnDates();
-        return taskRepository.findById(id);
+        Optional<Task> taskOptional = taskRepository.findById(id);
+        taskOptional.ifPresent(task -> {
+            task.updateStatusBasedOnDates();
+            taskRepository.save(task);
+        });
+        return taskOptional;
     }
 
     public Task saveTask(TaskDto taskDto){
@@ -64,7 +66,7 @@ public class TaskService {
         task.setStatus(taskDto.getStatus());
         task.setDescription(taskDto.getDescription());
         task.setDueDate(taskDto.getDueDate());
-
+        task.setUser(user);
         return taskRepository.save(task);
     }
 
@@ -83,8 +85,5 @@ public class TaskService {
                 .orElseThrow(() -> new RuntimeException("Task not found for this id:: " + id));
         taskRepository.delete(task);
     }
-
-
-
 
 }
