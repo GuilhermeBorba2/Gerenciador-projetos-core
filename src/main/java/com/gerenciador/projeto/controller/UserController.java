@@ -6,6 +6,8 @@ import com.gerenciador.projeto.model.User;
 import com.gerenciador.projeto.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +35,8 @@ public class UserController {
         return ResponseEntity.ok().body(user);
     }
 
-    @PutMapping("/`{id}")
+
+    @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody @Validated  UserDto userDetails){
         User updateUser = userService.updateUser(id, userDetails);
         return ResponseEntity.ok(updateUser);

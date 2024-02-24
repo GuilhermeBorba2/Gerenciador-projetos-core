@@ -4,6 +4,7 @@ import com.gerenciador.projeto.model.DTO.UserDto;
 import com.gerenciador.projeto.model.User;
 import com.gerenciador.projeto.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -43,19 +44,21 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User updateUser(long id, UserDto userDetails){
+    public User updateUser(long id, UserDto userDetails) {
         User user = userRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("User not found for this id::"+id));
-        user.setUsername(userDetails.getUsername());
-        user.setEmail(userDetails.getEmail());
-
-        if(userDetails.getNewPassword() !=null && !userDetails.getNewPassword().trim().isEmpty()){
+                .orElseThrow(() -> new RuntimeException("User not found for this id::" + id));
+        if (userDetails.getUsername() != null && !userDetails.getUsername().isEmpty()) {
+            user.setUsername(userDetails.getUsername());
+        }
+        if (userDetails.getEmail() != null && !userDetails.getEmail().isEmpty()) {
+            user.setEmail(userDetails.getEmail());
+        }
+        if (userDetails.getNewPassword() != null && !userDetails.getNewPassword().isEmpty()) {
             user.setPassword(passwordEncoder.encode(userDetails.getNewPassword()));
         }
-
-        user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
-        user.setPhoneNumber(userDetails.getPhoneNumber());
-        user.setNickname(user.getNickname());
+        if (userDetails.getPhoneNumber() != null) {
+            user.setPhoneNumber(userDetails.getPhoneNumber());
+        }
         return userRepository.save(user);
     }
     public void deleteUser(long id){
@@ -64,4 +67,8 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+    }
 }

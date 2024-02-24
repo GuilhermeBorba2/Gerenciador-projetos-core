@@ -2,7 +2,7 @@ package com.gerenciador.projeto.model.DTO;
 
 public class AuthTokenResponse {
     private String token;
-    private String type = "Bearer"; // Tipo padrão de token, mas pode ser ajustado conforme necessário
+    private String type = "Bearer";
 
     public AuthTokenResponse() {
     }
